@@ -1,0 +1,10 @@
+*.gb
+*.o
+*.map
+*.sym
+*.rtc
+*.sav
+*.sgm
+*.sa[1-9]
+*.sna
+*.sn[1-9]

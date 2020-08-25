@@ -23,6 +23,7 @@ Print:
 	jr Print
 
 ClearScreen:
+	; turns off the LCD as well
 	rst WaitVBlank
 	xor a
 	ldh [rLCDC], a
@@ -36,8 +37,18 @@ EnableScreen:
 	ldh [rLCDC], a
 	ret
 
-	ds $18
+NextLine:
+	push af
+	ld a, e
+	or $1f
+	ld e, a
+	inc de
+	pop af
+	ret
 
+	ds $10
+
+	assert @ == $40
 VBlank:
 	; clear zero flag
 	rla
@@ -56,6 +67,7 @@ LoadScreenData:
 
 	ds 2
 
+	assert @ == $50
 Timer:
 	scf
 	reti
@@ -121,14 +133,15 @@ PrintResult:
 	pop bc
 	ret
 
+	ds $f
+
 Init:
-	push af
-	xor a
+	ld a, 0
 	ldh [rIF], a
+	ldh [rIE], a
 	ei
 	rst WaitVBlank
 	ldh [rLCDC], a
-	pop af
 	jr nz, .no_color
 	ld a, $80
 	ldh [rBCPS], a
@@ -183,7 +196,7 @@ Init:
 	rst EnableScreen
 	jr MainMenu
 
-	ds $100 - @
+	assert @ == $100
 EntryPoint:
 	cp $11
 	jr Init

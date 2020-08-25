@@ -1,5 +1,6 @@
 ; Mostly taken from hardware.inc (https://github.com/gbdev/hardware.inc)
 
+rJOYP EQU $FF00
 rDIV  EQU $FF04
 rTIMA EQU $FF05
 rTMA  EQU $FF06

@@ -8,6 +8,7 @@ ReadJoypad:
 	push af
 	pop af
 	ld a, [c]
+	cpl
 	swap a
 	and $f0
 	ld b, a
@@ -16,6 +17,7 @@ ReadJoypad:
 	push af
 	pop af
 	ldh a, [c]
+	cpl
 	and $f
 	or b
 	pop bc

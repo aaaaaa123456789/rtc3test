@@ -49,8 +49,6 @@ check_timer: MACRO
 .done\@
 	xor a
 	ldh [rTAC], a
-	ldh a, [rIF]
-	and ~4 ;clear timer interrupts
 	ldh [rIF], a
 	ei
 	call ConvertTimingsTo100us

@@ -28,7 +28,10 @@ ClearScreen:
 	xor a
 	ldh [rLCDC], a
 	dec a
-	jp LoadScreenData
+	jr LoadScreenData
+
+JumpHL:
+	jp hl
 
 EnableScreen:
 	xor a
@@ -133,7 +136,7 @@ PrintResult:
 	pop bc
 	ret
 
-	ds $f
+	ds 11
 
 Init:
 	ld a, 0
@@ -142,6 +145,8 @@ Init:
 	ei
 	rst WaitVBlank
 	ldh [rLCDC], a
+	ldh [rSCX], a
+	ldh [rSCY], a
 	jr nz, .no_color
 	ld a, $80
 	ldh [rBCPS], a

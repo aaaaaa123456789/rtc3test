@@ -1,7 +1,7 @@
 INCLUDE "hardware.asm"
 INCLUDE "charmap.asm"
 INCLUDE "macros.asm"
-INCLUDE "timing.asm"
+INCLUDE "tmacros.asm"
 
 hTestResult EQU $ff80
 

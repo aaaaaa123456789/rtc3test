@@ -16,7 +16,6 @@ OnTest:
 	write_RTC_register RTCDH, 0
 	read_RTC_register RTCS
 	ld hl, $a000
-	ld c, l
 .loop
 	rst WaitVBlank
 	latch_RTC
@@ -26,7 +25,7 @@ OnTest:
 	scf
 	ccf
 	jr nz, .done
-	dec c
+	dec l
 	jr nz, .loop
 	scf
 .done
@@ -59,4 +58,19 @@ TickTest:
 	ret
 
 OffTest:
-	; ...
+	write_RTC_register RTCDH, $40
+	read_RTC_register RTCS
+	ld hl, $a000
+.loop
+	rst WaitVBlank
+	latch_RTC
+	jr .delay
+.delay
+	cp [hl]
+	scf
+	jr nz, .done
+	dec l
+	jr nz, .loop
+	and a
+.done
+	jp PassFailResult

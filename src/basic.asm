@@ -18,9 +18,9 @@ OnTest:
 	ld hl, $a000
 .loop
 	rst WaitVBlank
+	push af
 	latch_RTC
-	jr .delay
-.delay
+	pop af
 	cp [hl]
 	scf
 	ccf
@@ -65,9 +65,9 @@ OffTest:
 	ld hl, $a000
 .loop
 	rst WaitVBlank
+	push af
 	latch_RTC
-	jr .delay
-.delay
+	pop af
 	cp [hl]
 	scf
 	jr nz, .done

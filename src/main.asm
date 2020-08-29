@@ -142,8 +142,14 @@ RunTests:
 	sbc a
 	and RED ^ GREEN
 	xor GREEN
-	ld hl, hTestResult
+	ld c, a
+	inc e
+	res 2, e
 	rst WaitVBlank
+	ld hl, .clear_dots
+	rst Print
+	ld hl, hTestResult
+	ld a, c
 	call PrintResult
 	pop hl
 	inc hl
@@ -162,6 +168,9 @@ RunTests:
 
 .dots
 	db "...@"
+
+.clear_dots
+	db "   @"
 
 .return
 	db "* Return@"

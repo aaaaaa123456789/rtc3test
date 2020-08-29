@@ -3,7 +3,8 @@ INCLUDE "charmap.asm"
 INCLUDE "macros.asm"
 INCLUDE "tmacros.asm"
 
-hTestResult EQU $ff80
+hTestResult  EQU $ff80
+hRandomState EQU $fffe
 
 SECTION "Header", ROM0[0]
 INCLUDE "header.asm"

@@ -1,4 +1,7 @@
 ReadNextJoypad:
+	ldh a, [hRandomState]
+	inc a
+	ldh [hRandomState], a
 	rst WaitVBlank
 ReadJoypad:
 	push bc

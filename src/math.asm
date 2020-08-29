@@ -1,3 +1,21 @@
+Random:
+	; hRandomState = hRandomState * 73 + 29; returned in a
+	push hl
+	ldh a, [hRandomState]
+	ld l, a
+	add a, a
+	add a, a
+	add a, a
+	add a, l
+	add a, a
+	add a, a
+	add a, a
+	add a, l
+	add a, 29
+	pop hl
+	ldh [hRandomState], a
+	ret
+
 Multiply:
 	; bc = b * c
 	; preserves all other registers, including af

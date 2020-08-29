@@ -1,3 +1,14 @@
+PrepareTimer:
+	xor a
+	ldh [rTAC], a
+	lb de, 0, $20
+	ld a, e
+	ldh [rTMA], a
+	ldh [rTIMA], a
+	ld c, LOW(rDIV)
+	di
+	ret
+
 FixTimings:
 	; in: e: TIMA reading (262144 Hz), d: DIV reading (16384 Hz), c: DIV rollovers (64 Hz)
 	; out: cde: 24-bit count of 262144 Hz cycles

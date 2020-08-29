@@ -136,7 +136,7 @@ PrintResult:
 	pop bc
 	ret
 
-	ds 11
+	ds 6
 
 Init:
 	ld a, 0
@@ -199,6 +199,8 @@ Init:
 	dec a
 	call LoadScreenData
 	rst EnableScreen
+	ld a, 10
+	ld [rRAMG], a
 	jr MainMenu
 
 	assert @ == $100

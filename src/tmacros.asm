@@ -1,14 +1,54 @@
 ; all of these macros must remain as macros (instead of functions) to ensure timing is accurate
 
-prepare_timer: MACRO
+latch_RTC: MACRO
 	xor a
-	ldh [rTAC], a
-	ld de, $20
-	ld a, e
-	ldh [rTMA], a
-	ldh [rTIMA], a
-	ld c, LOW(rDIV)
-	di
+	ld [rRTCL], a
+	inc a
+	ld [rRTCL], a
+ENDM
+
+read_RTC_register: MACRO
+	; \1: register to read
+	; out: a: value
+	if !STRCMP(STRLWR("\1"), "a")
+		ld [rRAMB], a
+	endc
+	latch_RTC
+	if STRCMP(STRLWR("\1"), "a")
+		ld a, \1
+		ld [rRAMB], a
+	else
+		; delay
+		inc hl
+		dec hl
+	endc
+	ld a, [$a000]
+ENDM
+
+write_RTC_register: MACRO
+	; \1: register to write, \2: value to write
+	; clobbers a
+	if !STRCMP(STRLWR("\2"), "a")
+		push af
+	endc
+	if STRCMP(STRLWR("\1"), "a")
+		ld a, \1
+	endc
+	ld [rRAMB], a
+	if STRCMP(STRLWR("\2"), "a")
+		if ISCONST(\2)
+			if \2
+				ld a, \2
+			else
+				xor a
+			endc
+		else
+			ld a, \2
+		endc
+	else
+		pop af
+	endc
+	ld [$a000], a
 ENDM
 
 start_timer: MACRO

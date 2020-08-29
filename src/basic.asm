@@ -44,10 +44,12 @@ TickTest:
 	ld a, [hl]
 	cp b
 	jr z, .wait_loop
+	ld b, a
 	start_timer
 .tick_loop
 	latch_RTC
-	cp [hl]
+	ld a, [hl]
+	cp b
 	check_timer .tick_loop, nz
 	ld hl, hTestResult
 	call PrintTime

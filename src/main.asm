@@ -160,6 +160,7 @@ RunTests:
 	ld a, c
 	call PrintResult
 .next_test
+	rst NextLine
 	pop hl
 	inc hl
 	jr .test_loop

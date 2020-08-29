@@ -136,7 +136,7 @@ PrintResult:
 	pop bc
 	ret
 
-	ds 6
+	ds 2
 
 Init:
 	ld a, 0
@@ -173,6 +173,8 @@ Init:
 	ldh [rBCPD], a
 	ldh [rBCPD], a
 .no_color
+	ld a, %11101100
+	ldh [rBGP], a
 	ld de, $8000
 	ld b, %11111111
 	call LoadFont

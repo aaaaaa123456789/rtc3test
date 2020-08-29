@@ -22,6 +22,7 @@ Multiply:
 	push af
 	push hl
 	ld hl, 0
+	ld a, b
 	ld b, h
 	srl c
 .loop

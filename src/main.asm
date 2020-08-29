@@ -104,6 +104,7 @@ RunTests:
 	ld h, [hl]
 	ld l, a
 	coord de, 0, 2
+	ld c, GREEN
 .test_loop
 	ld a, [hli]
 	push hl
@@ -136,6 +137,13 @@ RunTests:
 	ld h, [hl]
 	ld l, a
 	push de
+	bit 7, h
+	res 7, h
+	jr z, .go
+	assert RED == (1 << 7)
+	bit 7, c
+	jr nz, .skipped
+.go
 	call JumpHL
 	; carry indicates the test failed
 	pop de
@@ -151,9 +159,17 @@ RunTests:
 	ld hl, hTestResult
 	ld a, c
 	call PrintResult
+.next_test
 	pop hl
 	inc hl
 	jr .test_loop
+
+.skipped
+	pop de
+	ld hl, .not_applicable
+	rst WaitVBlank
+	rst Print
+	jr .next_test
 
 .done
 	coord de, 6, 17
@@ -171,6 +187,9 @@ RunTests:
 
 .clear_dots
 	db "   @"
+
+.not_applicable
+	db "N/A@"
 
 .return
 	db "* Return@"

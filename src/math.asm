@@ -88,7 +88,7 @@ Divide:
 	srl e
 	jr nc, .low_byte_loop
 	ld b, d
-	ld c, e
+	ld c, a
 	ld a, l
 	pop hl
 	pop de

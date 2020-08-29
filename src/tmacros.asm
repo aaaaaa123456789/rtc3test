@@ -80,10 +80,23 @@ check_timer: MACRO
 
 .exit\@
 	ldh a, [rTIMA]
-	ld e, a
-	ldh a, [c]
+	ld c, a
+	ldh a, [rDIV]
+	push bc
+	ld b, e
+	ld e, c
 	ld c, d
 	ld d, a
+	and a
+	jr nz, .fix\@
+	ld a, e
+	and $e0
+	cp b
+	jr z, .fix\@
+	inc c
+.fix\@
+	pop af
+	ld b, a
 	call FixTimings
 
 .done\@

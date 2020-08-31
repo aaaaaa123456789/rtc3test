@@ -87,10 +87,10 @@ BasicWriteTest:
 	call ReadRTC
 	ld h, a
 	ld l, e
-	call .random60
+	call .random59
 	ld e, a
 	ld l, d
-	call .random60
+	call .random59
 	ld d, a
 .random_hour
 	call Random
@@ -149,7 +149,9 @@ BasicWriteTest:
 	ld [hli], a
 .minute_OK
 	ld a, c
-	cp e
+	sub e
+	jr z, .second_OK
+	dec a
 	jr z, .second_OK
 	ld a, "S"
 	ld [hli], a
@@ -167,13 +169,13 @@ BasicWriteTest:
 	and a
 	ret
 
-.random60
+.random59
 	call Random
 	and 63
-	cp 60
-	jr nc, .random60
+	cp 59
+	jr nc, .random59
 	cp l
-	jr z, .random60
+	jr z, .random59
 	ret
 
 RolloversTest:

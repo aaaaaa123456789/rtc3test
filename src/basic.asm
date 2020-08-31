@@ -3,6 +3,7 @@ BasicTests:
 	dw .tick, TickTest | $8000
 	dw .off_test, OffTest
 	dw .write | $8000, BasicWriteTest
+	dw .rollovers, RolloversTest
 	; ...
 	dw -1
 
@@ -14,6 +15,8 @@ BasicTests:
 	db "RTC off@"
 .write
 	db "Register writes@"
+.rollovers
+	db "Rollovers@"
 
 OnTest:
 	write_RTC_register RTCDH, 0
@@ -172,3 +175,33 @@ BasicWriteTest:
 	cp l
 	jr z, .random60
 	ret
+
+RolloversTest:
+	xor a
+	lb bc, $FF, 23
+	lb de, 59, 59
+	call WriteRTC
+	ld b, a
+	ld a, RTCS
+	ld [rRAMB], a
+	ld hl, $a000
+.loop
+	dec b
+	jr z, .fail
+	rst WaitVBlank
+	latch_RTC
+	ld a, [hl]
+	cp e
+	jr z, .loop
+	call ReadRTC
+	dec a
+	jr nz, .fail
+	or b
+	or c
+	or d
+	or e
+	jr z, .pass
+.fail
+	scf
+.pass
+	jp PassFailResult

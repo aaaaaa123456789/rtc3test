@@ -2,6 +2,7 @@ BasicTests:
 	dw .on_test, OnTest
 	dw .tick, TickTest | $8000
 	dw .off_test, OffTest
+	dw .write | $8000, BasicWriteTest
 	; ...
 	dw -1
 
@@ -11,6 +12,8 @@ BasicTests:
 	db "Tick@"
 .off_test
 	db "RTC off@"
+.write
+	db "Register writes@"
 
 OnTest:
 	write_RTC_register RTCDH, 0
@@ -76,3 +79,96 @@ OffTest:
 	and a
 .done
 	jp PassFailResult
+
+BasicWriteTest:
+	call ReadRTC
+	ld h, a
+	ld l, e
+	call .random60
+	ld e, a
+	ld l, d
+	call .random60
+	ld d, a
+.random_hour
+	call Random
+	and 31
+	cp 24
+	jr nc, .random_hour
+	cp c
+	jr z, .random_hour
+	ld c, a
+.random_day
+	call Random
+	cp b
+	jr z, .random_day
+	ld b, a
+	srl h
+	sbc a
+	inc a
+	call WriteRTC
+	rst WaitVBlank ;wait one frame for good measure
+	push de
+	push bc
+	push af
+	ld hl, FailString
+	ld de, hTestResult
+	rst Print
+	ld a, " "
+	ld [de], a
+	call ReadRTC
+	pop hl
+	cp h
+	ld hl, hTestResult + 5
+	jr z, .control_OK
+	ld a, "C"
+	ld [hli], a
+.control_OK
+	; interrupts are disabled, so stack abuse is OK
+	pop af
+	add sp, -3
+	cp b
+	jr z, .day_OK
+	ld a, "D"
+	ld [hli], a
+.day_OK
+	pop af
+	inc sp
+	cp c
+	jr z, .hour_OK
+	ld a, "H"
+	ld [hli], a
+.hour_OK
+	pop bc
+	ld a, b
+	cp d
+	jr z, .minute_OK
+	ld a, "M"
+	ld [hli], a
+.minute_OK
+	ld a, c
+	cp e
+	jr z, .second_OK
+	ld a, "S"
+	ld [hli], a
+.second_OK
+	ld [hl], "@"
+	ld a, l
+	cp LOW(hTestResult + 5)
+	scf
+	ret nz
+	ld hl, PassString
+	ld de, hTestResult
+	rst Print
+	ld a, "@"
+	ld [de], a
+	and a
+	ret
+
+.random60
+	call Random
+	and 63
+	cp 60
+	jr nc, .random60
+	cp l
+	jr z, .random60
+	ret

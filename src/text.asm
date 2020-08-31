@@ -22,6 +22,9 @@ PrintTime:
 	; in: de: time (in units of 0.1ms), hl: buffer
 	; preserves all but a
 	push de
+	inc d
+	jr z, .timeout
+	dec d
 	push bc
 	ld b, d
 	ld c, e
@@ -59,3 +62,18 @@ PrintTime:
 	pop bc
 	pop de
 	ret
+
+.timeout
+	push hl
+	ld d, h
+	ld e, l
+	ld hl, .timeout_string
+	rst Print
+	ld a, "@"
+	ld [de], a
+	pop hl
+	pop de
+	ret
+
+.timeout_string
+	db "TIMEOUT@"

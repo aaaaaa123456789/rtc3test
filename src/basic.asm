@@ -3,7 +3,8 @@ BasicTests:
 	dw .tick, TickTest | $8000
 	dw .off_test, OffTest
 	dw .write | $8000, BasicWriteTest
-	dw .rollovers, RolloversTest
+	dw .rollovers, RolloversTest | $8000
+	dw .overflow, OverflowTest | $8000
 	; ...
 	dw -1
 
@@ -17,24 +18,12 @@ BasicTests:
 	db "Register writes@"
 .rollovers
 	db "Rollovers@"
+.overflow
+	db "Overflow@"
 
 OnTest:
 	write_RTC_register RTCDH, 0
-	read_RTC_register RTCS
-	ld hl, $a000
-.loop
-	rst WaitVBlank
-	push af
-	latch_RTC
-	pop af
-	cp [hl]
-	scf
-	ccf
-	jr nz, .done
-	dec l
-	jr nz, .loop
-	scf
-.done
+	call WaitNextRTCTick
 	jp PassFailResult
 
 TickTest:
@@ -67,20 +56,8 @@ TickTest:
 
 OffTest:
 	write_RTC_register RTCDH, $40
-	read_RTC_register RTCS
-	ld hl, $a000
-.loop
-	rst WaitVBlank
-	push af
-	latch_RTC
-	pop af
-	cp [hl]
-	scf
-	jr nz, .done
-	dec l
-	jr nz, .loop
-	and a
-.done
+	call WaitNextRTCTick
+	ccf
 	jp PassFailResult
 
 BasicWriteTest:
@@ -183,27 +160,34 @@ RolloversTest:
 	lb bc, $FF, 23
 	lb de, 59, 59
 	call WriteRTC
-	ld b, a
-	ld a, RTCS
-	ld [rRAMB], a
-	ld hl, $a000
-.loop
-	dec b
-	jr z, .fail
-	rst WaitVBlank
-	latch_RTC
-	ld a, [hl]
-	cp e
-	jr z, .loop
+	ld a, e
+	call WaitRTCTick
+	jr c, .done
 	call ReadRTC
+	and $c1
 	dec a
 	jr nz, .fail
 	or b
 	or c
 	or d
 	or e
-	jr z, .pass
+	jr z, .done
 .fail
+	scf
+.done
+	jp PassFailResult
+
+OverflowTest:
+	ld a, 1
+	lb bc, $FF, 23
+	lb de, 59, 59
+	call WriteRTC
+	ld a, e
+	call WaitRTCTick
+	read_RTC_register RTCDH
+	and $c1
+	cp $80
+	jr z, .pass
 	scf
 .pass
 	jp PassFailResult

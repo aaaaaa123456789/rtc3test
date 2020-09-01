@@ -42,3 +42,28 @@ WriteRTC:
 	ld a, l
 	pop hl
 	ret
+
+WaitNextRTCTick:
+	read_RTC_register RTCS
+WaitRTCTick:
+	; in: a: current seconds
+	; out: carry if timeout
+	push hl
+	ld hl, rRAMB
+	ld [hl], RTCS
+	assert !LOW(rRAMB)
+.loop
+	dec l
+	jr z, .fail
+	rst WaitVBlank
+	ld h, HIGH(rRTCL)
+	ld [hl], 0
+	ld [hl], 1
+	ld h, $a0
+	cp [hl]
+	jr z, .loop
+	scf
+.fail
+	ccf
+	pop hl
+	ret

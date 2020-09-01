@@ -74,6 +74,7 @@ BasicWriteTest:
 .random_hour
 	call Random
 	and 31
+	jr z, .random_hour
 	cp 24
 	jr nc, .random_hour
 	cp c
@@ -81,6 +82,8 @@ BasicWriteTest:
 	ld c, a
 .random_day
 	call Random
+	and a
+	jr z, .random_day
 	cp b
 	jr z, .random_day
 	ld b, a
@@ -151,6 +154,7 @@ BasicWriteTest:
 .random59
 	call Random
 	and 63
+	jr z, .random59
 	cp 59
 	jr nc, .random59
 	cp l

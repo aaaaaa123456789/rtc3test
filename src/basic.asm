@@ -5,7 +5,7 @@ BasicTests:
 	dw .write | $8000, BasicWriteTest
 	dw .rollovers, RolloversTest | $8000
 	dw .overflow, OverflowTest | $8000
-	; ...
+	dw .overflow_stickiness | $8000, OverflowStickinessTest | $8000
 	dw -1
 
 .on_test
@@ -20,6 +20,8 @@ BasicTests:
 	db "Rollovers@"
 .overflow
 	db "Overflow@"
+.overflow_stickiness
+	db "Overflow stickiness@"
 
 OnTest:
 	write_RTC_register RTCDH, 0
@@ -179,6 +181,7 @@ RolloversTest:
 
 OverflowTest:
 	ld a, 1
+OverflowTestContinue:
 	lb bc, $FF, 23
 	lb de, 59, 59
 	call WriteRTC
@@ -191,3 +194,7 @@ OverflowTest:
 	scf
 .pass
 	jp PassFailResult
+
+OverflowStickinessTest:
+	ld a, $81
+	jr OverflowTestContinue

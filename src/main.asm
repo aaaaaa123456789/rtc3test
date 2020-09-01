@@ -25,7 +25,7 @@ MainMenu:
 	dec c
 	jr nz, .entry_loop
 	ld hl, .bottom
-	coord de, 5, 17
+	coord de, 4, 17
 	rst Print
 	ld bc, (Menus.end - Menus) / 4 ;b = 0 here
 	rst EnableScreen

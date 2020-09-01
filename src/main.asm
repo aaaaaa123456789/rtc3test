@@ -167,6 +167,9 @@ RunTests:
 
 .skipped
 	pop de
+	dec e
+	dec e
+	dec e
 	ld hl, .not_applicable
 	rst WaitVBlank
 	rst Print

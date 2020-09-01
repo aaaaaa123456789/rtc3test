@@ -27,7 +27,7 @@ ENDM
 
 write_RTC_register: MACRO
 	; \1: register to write, \2: value to write
-	; clobbers a
+	; clobbers a except when \2 == a
 	if !STRCMP(STRLWR("\2"), "a")
 		push af
 	endc

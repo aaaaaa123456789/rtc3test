@@ -3,6 +3,7 @@ BasicTests:
 	dw .tick, TickTest | $8000
 	dw .off_test, OffTest
 	dw .write | $8000, BasicWriteTest
+	dw .increment | $8000, BasicIncrementTest | $8000
 	dw .rollovers, RolloversTest | $8000
 	dw .overflow, OverflowTest | $8000
 	dw .overflow_stickiness | $8000, OverflowStickinessTest | $8000
@@ -16,6 +17,8 @@ BasicTests:
 	db "RTC off@"
 .write
 	db "Register writes@"
+.increment
+	db "Second increment@"
 .rollovers
 	db "Rollovers@"
 .overflow
@@ -160,6 +163,20 @@ BasicWriteTest:
 	cp l
 	jr z, .random59
 	ret
+
+BasicIncrementTest:
+	call Random
+	and 63
+	cp 59
+	jr nc, BasicIncrementTest
+	ld l, a
+	write_RTC_register RTCS, a
+	call WaitRTCTick
+	read_RTC_register RTCS
+	inc l
+	sub l
+	add a, $FF
+	jp PassFailResult
 
 RolloversTest:
 	xor a

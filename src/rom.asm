@@ -1,3 +1,5 @@
+VERSION EQU 0
+
 INCLUDE "hardware.asm"
 INCLUDE "charmap.asm"
 INCLUDE "macros.asm"

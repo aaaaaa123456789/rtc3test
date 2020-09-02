@@ -25,7 +25,7 @@ MainMenu:
 	dec c
 	jr nz, .entry_loop
 	ld hl, .bottom
-	coord de, 4, 17
+	coord de, 2, 17
 	rst Print
 	ld bc, (Menus.end - Menus) / 4 ;b = 0 here
 	rst EnableScreen
@@ -81,7 +81,13 @@ MainMenu:
 	db "MBC3 RTC test ROM@"
 
 .bottom
-	db "* Run tests@"
+	db "* Run tests   v"
+	if VERSION
+		db "", VERSION / 100, (VERSION % 100) / 10, VERSION % 10
+	else
+		db "---"
+	endc
+	db "@"
 
 RunTests:
 	; hl: selected menu entry

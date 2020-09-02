@@ -67,6 +67,7 @@
 	charmap "*", $C1 ;A button
 	charmap ":", $C2
 	charmap "/", $C3
+	charmap "-", $C4
 	charmap "@", $FF ;string terminator
 
 ; colors

@@ -136,7 +136,7 @@ PrintResult:
 	pop bc
 	ret
 
-	ds 2
+	ds 3
 
 Init:
 	ld a, 0
@@ -148,10 +148,10 @@ Init:
 	ldh [rSCX], a
 	ldh [rSCY], a
 	jr nz, .no_color
-	ld a, $80
-	ldh [rBCPS], a
-	rlca
+	inc a
 	ldh [rVBK], a
+	rrca
+	ldh [rBCPS], a
 	xor a
 	call LoadScreenData
 	ldh [rVBK], a

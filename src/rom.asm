@@ -14,10 +14,13 @@ INCLUDE "header.asm"
 SECTION "Main", ROM0[$150]
 INCLUDE "main.asm"
 
-INCLUDE "basic.asm"
 INCLUDE "font.asm"
 INCLUDE "math.asm"
 INCLUDE "joypad.asm"
 INCLUDE "rtc.asm"
 INCLUDE "text.asm"
 INCLUDE "timing.asm"
+
+; Tests
+INCLUDE "basic.asm"
+INCLUDE "range.asm"

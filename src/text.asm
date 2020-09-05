@@ -18,6 +18,36 @@ PassString:
 FailString:
 	db "FAIL@"
 
+FailedRegistersResult:
+	; in: a: bit pattern indicating failed registers (0 = RTCS, 4 = RTCDH)
+	; out: result in hTestResult and carry flag
+	cp 1
+	ccf
+	call PassFailResult
+	ret nc
+	adc a ;set the bit after the flags
+	add a, a
+	add a, a
+	lb bc, 6, LOW(hTestResult + 5)
+	ld d, a
+	ld a, " "
+	ldh [hTestResult + 4], a
+	ld hl, .letters
+.loop
+	ld a, [hli]
+	sla d
+	jr nc, .skip
+	ldh [c], a
+	inc c
+.skip
+	dec b
+	jr nz, .loop
+	; the last bit is always set (so the terminator is written), so the carry flag is set
+	ret
+
+.letters
+	db "CDHMS@"
+
 PrintTime:
 	; in: de: time (in units of 0.1ms), hl: buffer
 	; preserves all but a

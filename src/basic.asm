@@ -97,62 +97,33 @@ BasicWriteTest:
 	rst WaitVBlank ;wait one frame for good measure
 	push de
 	push bc
-	push af
-	ld hl, FailString
-	ld de, hTestResult
-	rst Print
-	ld a, " "
-	ld [de], a
+	ld h, a
 	call ReadRTC
+	cp h
+	rst CarryIfNonZero
+	ld a, b
+	ld b, 0
+	rl b
 	pop hl
 	cp h
-	ld hl, hTestResult + 5
-	jr z, .control_OK
-	ld a, "C"
-	ld [hli], a
-.control_OK
-	; interrupts are disabled, so stack abuse is OK
-	pop af
-	add sp, -3
-	cp b
-	jr z, .day_OK
-	ld a, "D"
-	ld [hli], a
-.day_OK
-	pop af
-	inc sp
-	cp c
-	jr z, .hour_OK
-	ld a, "H"
-	ld [hli], a
-.hour_OK
-	pop bc
-	ld a, b
-	cp d
-	jr z, .minute_OK
-	ld a, "M"
-	ld [hli], a
-.minute_OK
+	rst CarryIfNonZero
+	rl b
 	ld a, c
-	sub e
-	jr z, .second_OK
-	dec a
-	jr z, .second_OK
-	ld a, "S"
-	ld [hli], a
-.second_OK
-	ld [hl], "@"
-	ld a, l
-	cp LOW(hTestResult + 5)
-	scf
-	ret nz
-	ld hl, PassString
-	ld de, hTestResult
-	rst Print
-	ld a, "@"
-	ld [de], a
-	and a
-	ret
+	cp l
+	rst CarryIfNonZero
+	rl b
+	pop hl
+	ld a, d
+	cp h
+	rst CarryIfNonZero
+	rl b
+	ld a, e
+	sub l
+	cp 2
+	ccf
+	ld a, b
+	rla
+	jp FailedRegistersResult
 
 .random59
 	call Random
@@ -174,8 +145,8 @@ BasicIncrementTest:
 	call WaitRTCTick
 	read_RTC_register RTCS
 	inc l
-	sub l
-	add a, $FF
+	cp l
+	rst CarryIfNonZero
 	jp PassFailResult
 
 RolloversTest:
@@ -189,14 +160,11 @@ RolloversTest:
 	call ReadRTC
 	and $c1
 	dec a
-	jr nz, .fail
 	or b
 	or c
 	or d
 	or e
-	jr z, .done
-.fail
-	scf
+	rst CarryIfNonZero
 .done
 	jp PassFailResult
 
@@ -211,9 +179,7 @@ OverflowTestContinue:
 	read_RTC_register RTCDH
 	and $c1
 	cp $80
-	jr z, .pass
-	scf
-.pass
+	rst CarryIfNonZero
 	jp PassFailResult
 
 OverflowStickinessTest:

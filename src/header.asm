@@ -49,7 +49,13 @@ NextLine:
 	pop af
 	ret
 
-	ds $10
+CarryIfNonZero:
+	scf
+	ret nz
+	ccf
+	ret
+
+	ds $c
 
 	assert @ == $40
 VBlank:

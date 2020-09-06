@@ -151,7 +151,7 @@ BasicIncrementTest:
 
 RolloversTest:
 	xor a
-	lb bc, $FF, 23
+	lb bc, $ff, 23
 	lb de, 59, 59
 	call WriteRTC
 	ld a, e
@@ -171,7 +171,7 @@ RolloversTest:
 OverflowTest:
 	ld a, 1
 OverflowTestContinue:
-	lb bc, $FF, 23
+	lb bc, $ff, 23
 	lb de, 59, 59
 	call WriteRTC
 	ld a, e

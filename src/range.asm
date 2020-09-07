@@ -82,3 +82,21 @@ AllBitsSetTest:
 .done
 	rst CarryIfNonZero
 	jp PassFailResult
+
+AllBitsClearTest:
+	write_RTC_register RTCDH, 0
+	; wait for a tick to prevent unrelated bugs from affecting this test
+	call WaitNextRTCTick
+	xor a
+	ld b, a
+	ld c, a
+	ld d, a
+	ld e, a
+	call WriteRTC
+	rst WaitVBlank
+	call ReadRTC
+	or b
+	or c
+	or d
+	or e
+	jr AllBitsSetTest.done

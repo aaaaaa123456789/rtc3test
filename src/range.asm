@@ -1,10 +1,13 @@
 RangeTests:
 	dw .register_bits, RegisterBitsTest
+	dw .all_bits_set, AllBitsSetTest
 	; ...
 	dw -1
 
 .register_bits
 	db "Reg. bits@"
+.all_bits_set
+	db "All bits set@"
 
 RegisterBitsTest:
 	; turn it off just in case
@@ -56,3 +59,26 @@ RegisterBitsTest:
 	cp e
 	rst CarryIfNonZero
 	ret
+
+AllBitsSetTest:
+	write_RTC_register RTCDH, $40
+	ld a, $c1
+	lb bc, $ff, 23
+	lb de, 59, 59
+	call WriteRTC
+	rst WaitVBlank
+	call ReadRTC
+	cp $c1
+	jr nz, .done
+	ld a, d
+	cp e
+	jr nz, .done
+	cp 59
+	jr nz, .done
+	inc b
+	jr nz, .done
+	ld a, c
+	cp 23
+.done
+	rst CarryIfNonZero
+	jp PassFailResult

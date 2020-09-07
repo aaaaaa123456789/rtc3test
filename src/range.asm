@@ -1,15 +1,59 @@
 RangeTests:
-	dw .register_bits, RegisterBitsTest
+	dw .all_bits_clear, AllBitsClearTest
 	dw .all_bits_set, AllBitsSetTest
+	dw .valid_bits, ValidBitsTest
 	; ...
 	dw -1
 
-.register_bits
-	db "Reg. bits@"
+.all_bits_clear
+	db "All bits clear@"
 .all_bits_set
 	db "All bits set@"
+.valid_bits
+	db "Valid bits@"
 
-RegisterBitsTest:
+AllBitsClearTest:
+	write_RTC_register RTCDH, 0
+	; wait for a tick to prevent unrelated bugs from affecting this test
+	call WaitNextRTCTick
+	xor a
+	ld b, a
+	ld c, a
+	ld d, a
+	ld e, a
+	call WriteRTC
+	rst WaitVBlank
+	call ReadRTC
+	or b
+	or c
+	or d
+	or e
+	jr AllBitsSetTest.done
+
+AllBitsSetTest:
+	write_RTC_register RTCDH, $40
+	ld a, $c1
+	lb bc, $ff, 23
+	lb de, 59, 59
+	call WriteRTC
+	rst WaitVBlank
+	call ReadRTC
+	cp $c1
+	jr nz, .done
+	ld a, d
+	cp e
+	jr nz, .done
+	cp 59
+	jr nz, .done
+	inc b
+	jr nz, .done
+	ld a, c
+	cp 23
+.done
+	rst CarryIfNonZero
+	jp PassFailResult
+
+ValidBitsTest:
 	; turn it off just in case
 	write_RTC_register RTCDH, $40
 	ld hl, rRAMB ;also initializes l = 0 for error tracking
@@ -59,44 +103,3 @@ RegisterBitsTest:
 	cp e
 	rst CarryIfNonZero
 	ret
-
-AllBitsSetTest:
-	write_RTC_register RTCDH, $40
-	ld a, $c1
-	lb bc, $ff, 23
-	lb de, 59, 59
-	call WriteRTC
-	rst WaitVBlank
-	call ReadRTC
-	cp $c1
-	jr nz, .done
-	ld a, d
-	cp e
-	jr nz, .done
-	cp 59
-	jr nz, .done
-	inc b
-	jr nz, .done
-	ld a, c
-	cp 23
-.done
-	rst CarryIfNonZero
-	jp PassFailResult
-
-AllBitsClearTest:
-	write_RTC_register RTCDH, 0
-	; wait for a tick to prevent unrelated bugs from affecting this test
-	call WaitNextRTCTick
-	xor a
-	ld b, a
-	ld c, a
-	ld d, a
-	ld e, a
-	call WriteRTC
-	rst WaitVBlank
-	call ReadRTC
-	or b
-	or c
-	or d
-	or e
-	jr AllBitsSetTest.done

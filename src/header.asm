@@ -55,7 +55,13 @@ CarryIfNonZero:
 	ccf
 	ret
 
-	ds $c
+	ds 4
+
+	assert @ == $38 ;we're not going to call this, so the assert is necessary
+CrashFF:
+	rst Crash
+
+	ds 7
 
 	assert @ == $40
 VBlank:

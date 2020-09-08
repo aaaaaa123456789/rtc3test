@@ -33,8 +33,8 @@ AllBitsClearTest:
 AllBitsSetTest:
 	write_RTC_register RTCDH, $40
 	ld a, $c1
-	lb bc, $ff, 23
-	lb de, 59, 59
+	lb bc, $ff, $1f
+	lb de, $3f, $3f
 	call WriteRTC
 	rst WaitVBlank
 	call ReadRTC
@@ -43,12 +43,12 @@ AllBitsSetTest:
 	ld a, d
 	cp e
 	jr nz, .done
-	cp 59
+	cp $3f
 	jr nz, .done
 	inc b
 	jr nz, .done
 	ld a, c
-	cp 23
+	cp $1f
 .done
 	rst CarryIfNonZero
 	jp PassFailResult
@@ -99,6 +99,7 @@ ValidBitsTest:
 	ld [bc], a
 	and c
 	ld e, a
+	latch_RTC
 	ld a, [bc]
 	cp e
 	rst CarryIfNonZero

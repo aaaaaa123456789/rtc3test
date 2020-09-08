@@ -91,6 +91,7 @@ ValidBitsTest:
 	ld [bc], a
 	and c
 	ld d, a
+	latch_RTC
 	ld a, [bc]
 	cp d
 	scf

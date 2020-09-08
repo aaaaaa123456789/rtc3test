@@ -182,6 +182,7 @@ RunTests:
 	jr .next_test
 
 .done
+	pop hl
 	coord de, 6, 17
 	ld hl, .return
 	rst WaitVBlank
@@ -190,7 +191,7 @@ RunTests:
 	call WaitForButtonPress
 	and a
 	jr nz, .return_loop
-	jp MainMenu
+	ret
 
 .dots
 	db "...@"

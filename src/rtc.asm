@@ -43,6 +43,40 @@ WriteRTC:
 	pop hl
 	ret
 
+WaitCompareRTC:
+	; non-zero and carry on timeout
+	ld h, a
+	call WaitNextRTCTick
+	ld a, h
+	sbc a
+	ret nz
+CompareRTC:
+	; in: abcde: expected RTC state
+	; out: zero: RTC matches; all registers clobbered
+	push bc
+	push de
+	ld h, a
+	call ReadRTC
+	sub h
+	ld h, a
+	ld l, e
+	ld a, d
+	pop de
+	sub d
+	or h
+	ld a, l
+	pop hl
+	jr nz, .done
+	cp e
+	jr nz, .done
+	ld a, b
+	cp h
+	jr nz, .done
+	ld a, c
+	cp l
+.done
+	ret
+
 WaitNextRTCTick:
 	read_RTC_register RTCS
 WaitRTCTick:

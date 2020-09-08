@@ -131,35 +131,10 @@ InvalidValueTickTest:
 	ld b, a
 	call Random
 	and 1
-	ld h, a
 	call WriteRTC
-	ld a, e
-	call WaitRTCTick
-	jr c, .done
-	push bc
-	push de
-	call ReadRTC
-	cp h
-	pop hl
-	jr nz, .failed
-	inc l
-	ld a, e
-	cp l
-	jr nz, .failed
-	ld a, d
-	cp h
-	jr nz, .failed
-	pop hl
-	push hl ;so we can pop it again
-	ld a, c
-	cp l
-	jr nz, .failed
-	ld a, b
-	cp h
-.failed
-	pop hl
+	inc e
+	call WaitCompareRTC
 	rst CarryIfNonZero
-.done
 	jp PassFailResult
 
 InvalidRolloversTest:

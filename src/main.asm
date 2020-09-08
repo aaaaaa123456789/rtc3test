@@ -1,12 +1,11 @@
 MainMenu:
+	ld b, 0
+.main_loop
 	rst ClearScreen
 	coord de, 2, 0
 	ld hl, .title
 	rst Print
-	coord de, 1, 2
-	ld a, ">"
-	ld [de], a
-	inc e
+	coord de, 2, 2
 	ld c, (Menus.end - Menus) / 4
 	ld hl, Menus
 .entry_loop
@@ -27,7 +26,8 @@ MainMenu:
 	ld hl, .bottom
 	coord de, 2, 17
 	rst Print
-	ld bc, (Menus.end - Menus) / 4 ;b = 0 here
+	call .print_cursor_position
+	ld c, (Menus.end - Menus) / 4
 	rst EnableScreen
 .menu_loop
 	call WaitForButtonPress
@@ -38,7 +38,6 @@ MainMenu:
 	rept 5
 		add hl, hl
 	endr
-	coord de, 1, 2
 	add hl, de
 	inc b
 	dec a
@@ -56,16 +55,11 @@ MainMenu:
 .no_bottom_wrap
 	rst WaitVBlank
 	ld [hl], " "
-	ld l, b
-	ld h, 0
-	rept 5
-		add hl, hl
-	endr
-	add hl, de
-	ld [hl], ">"
+	call .print_cursor_position
 	jr .menu_loop
 
 .execute
+	push bc
 	ld a, b
 	add a, a
 	add a, a
@@ -75,7 +69,19 @@ MainMenu:
 	sub l
 	ld h, a
 	call RunTests
-	jr MainMenu
+	pop bc
+	jr .main_loop
+
+.print_cursor_position
+	coord de, 1, 2
+	ld l, b
+	ld h, 0
+	rept 5
+		add hl, hl
+	endr
+	add hl, de
+	ld [hl], ">"
+	ret
 
 .title
 	db "MBC3 RTC test ROM@"

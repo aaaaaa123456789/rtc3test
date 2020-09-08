@@ -2,6 +2,8 @@ RangeTests:
 	dw .all_bits_clear, AllBitsClearTest
 	dw .all_bits_set, AllBitsSetTest
 	dw .valid_bits, ValidBitsTest
+	dw .invalid_value_tick | $8000, InvalidValueTickTest | $8000
+	dw .invalid_rollovers | $8000, InvalidRolloversTest | $8000
 	; ...
 	dw -1
 
@@ -11,6 +13,10 @@ RangeTests:
 	db "All bits set@"
 .valid_bits
 	db "Valid bits@"
+.invalid_value_tick
+	db "Invalid value tick@"
+.invalid_rollovers
+	db "Invalid rollovers@"
 
 AllBitsClearTest:
 	write_RTC_register RTCDH, 0
@@ -105,3 +111,56 @@ ValidBitsTest:
 	cp e
 	rst CarryIfNonZero
 	ret
+
+InvalidValueTickTest:
+	call Random
+	or $fc
+	inc a
+	jr z, InvalidValueTickTest
+	add a, 63 ;results in a value between 60 and 62
+	ld e, a
+	call Random
+	and 3
+	add a, 60
+	ld d, a
+	call Random
+	and 7
+	add a, 24
+	ld c, a
+	call Random
+	ld b, a
+	call Random
+	and 1
+	ld h, a
+	call WriteRTC
+	ld a, e
+	call WaitRTCTick
+	jr c, .done
+	push bc
+	push de
+	call ReadRTC
+	cp h
+	pop hl
+	jr nz, .failed
+	inc l
+	ld a, e
+	cp l
+	jr nz, .failed
+	ld a, d
+	cp h
+	jr nz, .failed
+	pop hl
+	push hl ;so we can pop it again
+	ld a, c
+	cp l
+	jr nz, .failed
+	ld a, b
+	cp h
+.failed
+	pop hl
+	rst CarryIfNonZero
+.done
+	jp PassFailResult
+
+InvalidRolloversTest:
+	; ...

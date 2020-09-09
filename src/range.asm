@@ -4,7 +4,6 @@ RangeTests:
 	dw .valid_bits, ValidBitsTest
 	dw .invalid_value_tick | $8000, InvalidValueTickTest | $8000
 	dw .invalid_rollovers | $8000, InvalidRolloversTest | $8000
-	; ...
 	dw -1
 
 .all_bits_clear
@@ -138,4 +137,54 @@ InvalidValueTickTest:
 	jp PassFailResult
 
 InvalidRolloversTest:
-	; ...
+	ld l, 0
+	call .random_minutes
+	ld e, 63
+	call WriteRTC
+	ld e, l ;must be 0 here
+	call .test
+	call .random_hours
+	lb de, 63, 59
+	call WriteRTC
+	ld de, 0
+	call .test
+	call .random_days
+	lb de, 59, 59
+	ld c, 31
+	call WriteRTC
+	ld de, 0
+	ld c, d
+	call .test
+	ld a, l
+	jp FailedRegistersResult
+
+.random_minutes
+	call Random
+	and 63
+	cp 59
+	jr nc, .random_minutes
+	ld d, a
+.random_hours
+	call Random
+	and 31
+	cp 23
+	jr nc, .random_hours
+	ld c, a
+.random_days
+	call Random
+	ld b, a
+	call Random
+	and 1
+	ret z
+	inc b
+	jr z, .random_days
+	dec b
+	ret
+
+.test
+	push hl
+	call WaitCompareRTC
+	rst CarryIfNonZero
+	pop hl
+	rl l
+	ret

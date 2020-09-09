@@ -4,6 +4,8 @@ RangeTests:
 	dw .valid_bits, ValidBitsTest
 	dw .invalid_value_tick | $8000, InvalidValueTickTest | $8000
 	dw .invalid_rollovers | $8000, InvalidRolloversTest | $8000
+	dw .high_minutes, HighMinutesTest
+	dw .high_hours, HighHoursTest
 	dw -1
 
 .all_bits_clear
@@ -16,6 +18,10 @@ RangeTests:
 	db "Invalid value tick@"
 .invalid_rollovers
 	db "Invalid rollovers@"
+.high_minutes
+	db "High minutes@"
+.high_hours
+	db "High hours@"
 
 AllBitsClearTest:
 	write_RTC_register RTCDH, 0
@@ -188,3 +194,50 @@ InvalidRolloversTest:
 	pop hl
 	rl l
 	ret
+
+HighMinutesTest:
+	call Random
+	or $fc
+	inc a
+	jr z, HighMinutesTest
+	add a, 63 ;results in a value between 60 and 62
+	ld d, a
+.hours
+	call Random
+	and $1f
+	cp 23
+	jr nc, .hours
+	ld c, a
+	call Random
+	ld b, a
+	call Random
+	and 1
+	ld e, 59
+	call WriteRTC
+	inc d
+	ld e, 0
+	jr HighHoursTest.done
+
+HighHoursTest:
+	call Random
+	or $f8
+	inc a
+	jr z, HighHoursTest
+	add a, 31 ;results in a value between 24 and 30
+	ld c, a
+.days
+	call Random
+	inc a
+	jr z, .days
+	dec a
+	ld b, a
+	call Random
+	and 1
+	lb de, 59, 59
+	call WriteRTC
+	ld de, 0
+	inc c
+.done
+	call WaitCompareRTC
+	rst CarryIfNonZero
+	jp PassFailResult

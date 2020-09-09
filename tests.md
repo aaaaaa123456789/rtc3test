@@ -70,3 +70,8 @@ that is out of range (both in terms of bits and in terms of the expected ranges 
 * **Invalid rollovers** (register list, conditional): tests rollovers where the seconds, minutes and hours registers
   roll past the maximum value that will fit in them (63 for seconds and minutes and 31 for hours); in all cases, this
   should set the affected register to zero _without_ causing the next register to increment.
+* **High minutes** (pass/fail): sets the minutes register to a value between 60 and 62 and the seconds register to 59,
+  and waits for the RTC to tick. The test passes if the minutes register is incremented (and the seconds become 0).
+* **High hours** (pass/fail): sets the hours register to a value between 24 and 30 and the minutes and seconds
+  registers to 59, and waits for the RTC to tick. The test passes if the hours register is incremented (and the
+  minutes and seconds registers become 0).

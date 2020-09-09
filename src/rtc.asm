@@ -47,9 +47,9 @@ WaitCompareRTC:
 	; non-zero and carry on timeout
 	ld h, a
 	call WaitNextRTCTick
-	ld a, h
 	sbc a
 	ret nz
+	ld a, h
 CompareRTC:
 	; in: abcde: expected RTC state
 	; out: zero: RTC matches; all registers clobbered

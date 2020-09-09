@@ -1,4 +1,4 @@
-VERSION EQU 1
+VERSION EQU 2
 
 INCLUDE "hardware.asm"
 INCLUDE "charmap.asm"

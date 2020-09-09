@@ -4,6 +4,7 @@ This document describes the tests and expected results executed by the test ROM.
 
 * [Notation and common conventions](notation-and-common-conventions)
 * [Basic tests](basic-tests)
+* [Range tests](range-tests)
 
 ## Notation and common conventions
 
@@ -25,6 +26,8 @@ Some behaviors are very common in tests, and thus they are given short attribute
   that test suite).
 * **Pass/fail**: refers to a test that will simply report a pass/fail result. Tests without this attribute will report
   additional details when run.
+* **Register list**: refers to a test that will simply report a pass result if all RTC registers contain the expected
+  values, but when this is not the case, it will include the list of registers in the fail result (such as `FAIL MS`).
 
 ## Basic tests
 
@@ -32,10 +35,9 @@ Some behaviors are very common in tests, and thus they are given short attribute
 * **Tick** (conditional): evaluates the time taken between successive ticks. (expected: 1000ms, tolerance: 5ms)
 * **RTC off** (pass/fail): disables the RTC and waits approximately four seconds for it to tick. The test fails if the
   RTC ticks.
-* **Register writes** (pass/fail): generates a random new RTC state (ensuring that all values are different from the
-  current state and that no rollovers will happen), writes it to the RTC registers and attempts to read it back. The
-  test will pass if the state read back is equal to the new state, or to the new state plus one second. Otherwise, the
-  registers that contained incorrect values will be listed.
+* **Register writes** (register list): generates a random new RTC state (ensuring that all values are different from
+  the current state and that no rollovers will happen), writes it to the RTC registers and attempts to read it back.
+  The test will pass if the state read back is equal to the new state, or to the new state plus one second.
 * **Second increment** (pass/fail, conditional): sets the seconds register to a random value (other than 59) and waits
   for it to tick. The test passes if the new value is one greater than the value that was set.
 * **Rollovers** (pass/fail, conditional): sets the RTC state to 255 days, 23:59:59, and waits for it to tick. The test
@@ -44,3 +46,32 @@ Some behaviors are very common in tests, and thus they are given short attribute
   to tick. The test passes if the overflow flag is set after it ticks.
 * **Overflow stickiness** (pass/fail, conditional): repeats the previous test, but with overflow set. The test passes
   if the overflow flag remains set after the RTC ticks.
+
+## Range tests
+
+All of these tests verify that the RTC registers have the range of values they should have, and that writing a value
+that is out of range (both in terms of bits and in terms of the expected ranges of the registers) works correctly.
+
+* **All bits clear** (pass/fail): writes 0 to all RTC registers and validates that 0 is read back from all of them.
+  (This test will wait for an RTC tick before writing the values to ensure that the seconds register doesn't read back
+  1 due to an unexpected tick.)
+* **All bits set** (pass/fail): writes values to the RTC registers with all valid bits set ($3F to the seconds and
+  minutes registers, $1F to the hours register, $FF to the days register and $C1 to the control register) and checks
+  that the same values are read back.
+* **Valid bits** (register list): tests that only valid bits in each register (bits 0-5 for the seconds and minutes
+  registers, 0-4 for the hours register and 0, 6 and 7 for the control register) are readable and writable; other bits
+  should always read back as 0. The test will write a random value and its complement to each register (other than the
+  days register, which doesn't have invalid bits) and check whether invalid bits read back as 0 (instead of whatever
+  was written). The test passes if the value read back from each register is the value that was written with invalid
+  bits set to zero.
+* **Invalid value tick** (pass/fail, conditional): sets the hours, minutes and seconds registers to an invalid time
+  (such as 28:63:60) and waits for the RTC to tick. The test passes if the day remains the same and the time is what
+  was written plus one second (28:63:61 in the example).
+* **Invalid rollovers** (register list, conditional): tests rollovers where the seconds, minutes and hours registers
+  roll past the maximum value that will fit in them (63 for seconds and minutes and 31 for hours); in all cases, this
+  should set the affected register to zero _without_ causing the next register to increment.
+* **High minutes** (pass/fail): sets the minutes register to a value between 60 and 62 and the seconds register to 59,
+  and waits for the RTC to tick. The test passes if the minutes register is incremented (and the seconds become 0).
+* **High hours** (pass/fail): sets the hours register to a value between 24 and 30 and the minutes and seconds
+  registers to 59, and waits for the RTC to tick. The test passes if the hours register is incremented (and the
+  minutes and seconds registers become 0).

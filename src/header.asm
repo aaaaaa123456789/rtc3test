@@ -49,7 +49,19 @@ NextLine:
 	pop af
 	ret
 
-	ds $10
+CarryIfNonZero:
+	scf
+	ret nz
+	ccf
+	ret
+
+	ds 4
+
+	assert @ == $38 ;we're not going to call this, so the assert is necessary
+CrashFF:
+	rst Crash
+
+	ds 7
 
 	assert @ == $40
 VBlank:
@@ -136,7 +148,7 @@ PrintResult:
 	pop bc
 	ret
 
-	ds 2
+	ds 9
 
 Init:
 	ld a, 0
@@ -148,30 +160,31 @@ Init:
 	ldh [rSCX], a
 	ldh [rSCY], a
 	jr nz, .no_color
-	ld a, $80
-	ldh [rBCPS], a
-	rlca
+	inc a
 	ldh [rVBK], a
+	rrca
+	ldh [rBCPS], a
 	xor a
 	call LoadScreenData
 	ldh [rVBK], a
+	ld c, LOW(rBCPD)
 	; 0: white
 	dec a
-	ldh [rBCPD], a
-	ldh [rBCPD], a
+	ldh [c], a
+	ldh [c], a
 	; 1: green (80%)
 	ld a, LOW(25 << 5)
-	ldh [rBCPD], a
+	ldh [c], a
 	ld a, HIGH(25 << 5)
-	ldh [rBCPD], a
+	ldh [c], a
 	; 2: red
 	ld a, 31
-	ldh [rBCPD], a
+	ldh [c], a
 	xor a
-	ldh [rBCPD], a
+	ldh [c], a
 	; 3: black
-	ldh [rBCPD], a
-	ldh [rBCPD], a
+	ldh [c], a
+	ldh [c], a
 .no_color
 	ld a, %11101100
 	ldh [rBGP], a

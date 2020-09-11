@@ -22,5 +22,6 @@ INCLUDE "text.asm"
 INCLUDE "timing.asm"
 
 ; Tests
+INCLUDE "tests.asm"
 INCLUDE "basic.asm"
 INCLUDE "range.asm"

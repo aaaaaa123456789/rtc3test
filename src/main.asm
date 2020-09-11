@@ -210,13 +210,3 @@ RunTests:
 
 .return
 	db "* Return@"
-
-Menus:
-	dw .basic_tests, BasicTests
-	dw .range_tests, RangeTests
-.end
-
-.basic_tests
-	db "Basic tests@"
-.range_tests
-	db "Range tests@"

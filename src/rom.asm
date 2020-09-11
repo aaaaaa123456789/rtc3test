@@ -20,6 +20,7 @@ INCLUDE "joypad.asm"
 INCLUDE "rtc.asm"
 INCLUDE "text.asm"
 INCLUDE "timing.asm"
+INCLUDE "wait.asm"
 
 ; Tests
 INCLUDE "tests.asm"

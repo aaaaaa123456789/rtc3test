@@ -10,19 +10,19 @@ SubsecondTests:
 	dw -1
 
 .short_second_write
-	db "RTCS/.5s@"
+	db "RTCS/500@"
 .long_second_write
-	db "RTCS/.9s@"
+	db "RTCS/900@"
 .short_minute_write
-	db "RTCM/.05s@"
+	db "RTCM/50@"
 .long_minute_write
-	db "RTCM/.6s@"
+	db "RTCM/600@"
 .hour_write
-	db "RTCH/.2s@"
+	db "RTCH/200@"
 .day_low_write
-	db "RTCDL/.8s@"
+	db "RTCDL/800@"
 .day_high_write
-	db "RTCDH/.3s@"
+	db "RTCDH/300@"
 
 ShortSecondWrite:
 	write_RTC_register RTCDH, 0

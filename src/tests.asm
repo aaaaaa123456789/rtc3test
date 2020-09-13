@@ -5,12 +5,15 @@
 Menus:
 	dw .basic_tests, BasicTests
 	dw .range_tests, RangeTests
+	dw .subsecond_tests, SubsecondTests
 .end
 
 .basic_tests
 	db "Basic tests@"
 .range_tests
 	db "Range tests@"
+.subsecond_tests
+	db "Sub-second writes@"
 
 ; Each test menu entry (defined at the top of its own file) defines the tests in order:
 ; SampleTests:

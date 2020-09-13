@@ -2,6 +2,10 @@ SubsecondTests:
 	dw .short_second_write, ShortSecondWrite
 	dw .long_second_write, LongSecondWrite
 	dw .short_minute_write, ShortMinuteWrite
+	dw .long_minute_write, LongMinuteWrite
+	dw .hour_write, HourWrite
+	dw .day_low_write, DayLowWrite
+	dw .day_high_write, DayHighWrite
 	; ...
 	dw -1
 
@@ -11,6 +15,14 @@ SubsecondTests:
 	db "RTCS/.9s@"
 .short_minute_write
 	db "RTCM/.05s@"
+.long_minute_write
+	db "RTCM/.6s@"
+.hour_write
+	db "RTCH/.2s@"
+.day_low_write
+	db "RTCDL/.8s@"
+.day_high_write
+	db "RTCDH/.3s@"
 
 ShortSecondWrite:
 	write_RTC_register RTCDH, 0
@@ -130,3 +142,15 @@ ENDM
 
 ShortMinuteWrite:
 	___test_sub_second_register_write RTCM, 1
+
+LongMinuteWrite:
+	___test_sub_second_register_write RTCM, 12
+
+HourWrite:
+	___test_sub_second_register_write RTCH, 4
+
+DayLowWrite:
+	___test_sub_second_register_write RTCDL, 16
+
+DayHighWrite:
+	___test_sub_second_register_write RTCDH, 6

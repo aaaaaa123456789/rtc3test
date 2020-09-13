@@ -97,7 +97,7 @@ PrintTime:
 	push hl
 	ld d, h
 	ld e, l
-	ld hl, .timeout_string
+	ld hl, TimeoutString
 	rst Print
 	ld a, "@"
 	ld [de], a
@@ -105,5 +105,14 @@ PrintTime:
 	pop de
 	ret
 
-.timeout_string
+TimeoutString:
 	db "TIMEOUT@"
+
+TimeoutResult:
+	ld hl, TimeoutString
+	ld de, hTestResult
+	rst Print
+	ld a, "@"
+	ld [de], a
+	scf
+	ret

@@ -49,7 +49,7 @@ WaitATimes50ms:
 	jr nz, .extrainner
 	nop
 	dec l
-	jr nz, .extrainner
+	jr nz, .extraloop
 	; loop total: 190 cycles (times N - 1 iterations)
 	add hl, hl ;dummy instruction to make up for the two lost cycles for jumps not taken
 .no_extra

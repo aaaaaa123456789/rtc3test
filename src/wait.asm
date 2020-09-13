@@ -41,7 +41,7 @@ WaitATimes50ms:
 	; remaining: 189.8 * (N - 1) + 169.8 cycles
 	; = 190 * (N - 1) + 170 - b cycles (because b = N / 5 at this point, rounded to nearest)
 	dec l
-	jr nz, .no_extra
+	jr z, .no_extra
 .extraloop
 	ld a, 46
 .extrainner

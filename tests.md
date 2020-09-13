@@ -38,8 +38,8 @@ Some behaviors are very common in tests, and thus they are given short attribute
 * **Register writes** (register list): generates a random new RTC state (ensuring that all values are different from
   the current state and that no rollovers will happen), writes it to the RTC registers and attempts to read it back.
   The test will pass if the state read back is equal to the new state, or to the new state plus one second.
-* **Second increment** (pass/fail, conditional): sets the seconds register to a random value (other than 59) and waits
-  for it to tick. The test passes if the new value is one greater than the value that was set.
+* **Seconds increment** (pass/fail, conditional): sets the seconds register to a random value (other than 59) and
+  waits for it to tick. The test passes if the new value is one greater than the value that was set.
 * **Rollovers** (pass/fail, conditional): sets the RTC state to 255 days, 23:59:59, and waits for it to tick. The test
   passes if the new value is 256 days, 00:00:00.
 * **Overflow** (pass/fail, conditional): sets the RTC state to 511 days (without overflow), 23:59:59, and waits for it

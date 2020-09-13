@@ -18,7 +18,7 @@ BasicTests:
 .write
 	db "Register writes@"
 .increment
-	db "Second increment@"
+	db "Seconds increment@"
 .rollovers
 	db "Rollovers@"
 .overflow

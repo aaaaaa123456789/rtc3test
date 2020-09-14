@@ -6,6 +6,7 @@ SubsecondTests:
 	dw .hour_write, HourWrite
 	dw .day_low_write, DayLowWrite
 	dw .day_high_write, DayHighWrite
+	dw .rtc_off_write, RTCOffTimingTest
 	; ...
 	dw -1
 
@@ -23,6 +24,8 @@ SubsecondTests:
 	db "RTCDL/800@"
 .day_high_write
 	db "RTCDH/300@"
+.rtc_off_write
+	db "RTC off/400@"
 
 ShortSecondWrite:
 	write_RTC_register RTCDH, 0
@@ -154,3 +157,46 @@ DayLowWrite:
 
 DayHighWrite:
 	___test_sub_second_register_write RTCDH, 6
+
+RTCOffTimingTest:
+	write_RTC_register RTCDH, 0
+	call WaitNextRTCTick
+	jp c, TimeoutResult
+	ld a, RTCS
+	ld [rRAMB], a
+	latch_RTC
+	ld hl, $a000
+	ld b, [hl]
+.wait
+	latch_RTC
+	ld a, [hl]
+	cp b
+	jr z, .wait
+	ld b, a
+	ld a, 12
+	call WaitATimes50ms
+	ld a, RTCDH
+	ld [rRAMB], a
+	ld [hl], $40
+	ld a, 30
+.loop
+	rst WaitVBlank
+	dec a
+	jr nz, .loop
+	call PrepareTimer
+	ld a, RTCS
+	ld [hl], 0
+	ld [rRAMB], a
+	start_timer
+.check
+	latch_RTC
+	ld a, [hl]
+	cp b
+	check_timer .check, nz
+	ld hl, hTestResult
+	call PrintTime
+	cpw de, 3920
+	ret c
+	cpw de, 4081
+	ccf
+	ret

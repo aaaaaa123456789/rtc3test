@@ -9,6 +9,13 @@ PrepareTimer:
 	di
 	ret
 
+AbortTimer:
+	xor a
+	ldh [rTAC], a
+	ldh [rIF], a
+	scf
+	reti
+
 FixTimings:
 	; in: e: TIMA reading (262144 Hz), d: DIV reading (16384 Hz), c: DIV rollovers (64 Hz)
 	; out: cde: 24-bit count of 262144 Hz cycles

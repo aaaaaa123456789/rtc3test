@@ -7,7 +7,6 @@ SubsecondTests:
 	dw .day_low_write, DayLowWrite
 	dw .day_high_write, DayHighWrite
 	dw .rtc_off_write, RTCOffTimingTest
-	dw .rtc_off_second_write | $8000, RTCOffSecondWriteTest
 	dw -1
 
 .short_second_write
@@ -26,8 +25,6 @@ SubsecondTests:
 	db "RTCDH/300@"
 .rtc_off_write
 	db "RTC off/400@"
-.rtc_off_second_write
-	db "RTCS with RTC off@"
 
 ShortSecondWrite:
 	write_RTC_register RTCDH, 0
@@ -202,71 +199,3 @@ RTCOffTimingTest:
 	cpw de, 4081
 	ccf
 	ret
-
-RTCOffSecondWriteTest:
-	write_RTC_register RTCDH, 0
-	call WaitNextRTCTick
-	jp c, TimeoutResult
-	ld a, RTCS
-	ld [rRAMB], a
-	latch_RTC
-	ld hl, $a000
-	ld b, [hl]
-.wait
-	latch_RTC
-	ld a, [hl]
-	cp b
-	jr z, .wait
-	ld b, a
-	ld a, 18
-	call WaitATimes50ms
-	ld a, RTCDH
-	ld [rRAMB], a
-	ld [hl], $40
-	ld a, 20
-.pre_write_loop
-	rst WaitVBlank
-	dec a
-	jr nz, .pre_write_loop
-	ld a, RTCS
-	ld [rRAMB], a
-.resample
-	call Random
-	and 63
-	cp 59
-	jr nc, .resample
-	cp b
-	jr z, .resample
-	ld b, a
-	ld [hl], a
-	ld a, 25
-.post_write_loop
-	rst WaitVBlank
-	dec a
-	jr nz, .post_write_loop
-	call PrepareTimer
-	ld a, RTCDH
-	ld [hl], 0
-	start_timer
-	ld a, RTCS
-	ld [rRAMB], a
-	latch_RTC
-	ld a, [hl]
-	cp b
-	jr nz, .fail
-.check
-	latch_RTC
-	ld a, [hl]
-	cp b
-	check_timer .check, nz
-	ld hl, hTestResult
-	call PrintTime
-	cpw de, 9920
-	ret c
-	cpw de, 10081
-	ccf
-	ret
-
-.fail
-	call AbortTimer
-	jp PassFailResult

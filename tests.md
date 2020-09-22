@@ -2,10 +2,10 @@
 
 This document describes the tests and expected results executed by the test ROM.
 
-* [Notation and common conventions](notation-and-common-conventions)
-* [Basic tests](basic-tests)
-* [Range tests](range-tests)
-* [Sub-second writes](sub-second-writes)
+* [Notation and common conventions](#notation-and-common-conventions)
+* [Basic tests](#basic-tests)
+* [Range tests](#range-tests)
+* [Sub-second writes](#sub-second-writes)
 
 ## Notation and common conventions
 

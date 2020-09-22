@@ -5,6 +5,7 @@ This document describes the tests and expected results executed by the test ROM.
 * [Notation and common conventions](notation-and-common-conventions)
 * [Basic tests](basic-tests)
 * [Range tests](range-tests)
+* [Sub-second writes](sub-second-writes)
 
 ## Notation and common conventions
 
@@ -75,3 +76,24 @@ that is out of range (both in terms of bits and in terms of the expected ranges 
 * **High hours** (pass/fail): sets the hours register to a value between 24 and 30 and the minutes and seconds
   registers to 59, and waits for the RTC to tick. The test passes if the hours register is incremented (and the
   minutes and seconds registers become 0).
+
+## Sub-second writes
+
+These tests check the behavior of the sub-second counter in the RTC when a register is written to. While sub-second
+values cannot be inspected directly, they can be measured by waiting for the RTC to tick.
+
+These tests are named after the register that is written to and the time remaining (in milliseconds) until the next
+tick at the time of writing. For instance, the RTCS/900 test will write to the seconds register when the next tick is
+900ms away (i.e., 100ms after a tick).
+
+The expected result for the tests that write to RTCS is 1000ms; the remaining test should result in the value shown in
+the test name. The tolerance is 8ms for all tests. The tests are:
+
+* **RTCS/500**
+* **RTCS/900**
+* **RTCM/50**
+* **RTCM/600**
+* **RTCH/200**
+* **RTCDL/800**
+* **RTCDH/300**
+* **RTC off/400** (also writes to RTCDH, but to the bit that turns the RTC off)

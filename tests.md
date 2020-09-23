@@ -2,9 +2,10 @@
 
 This document describes the tests and expected results executed by the test ROM.
 
-* [Notation and common conventions](notation-and-common-conventions)
-* [Basic tests](basic-tests)
-* [Range tests](range-tests)
+* [Notation and common conventions](#notation-and-common-conventions)
+* [Basic tests](#basic-tests)
+* [Range tests](#range-tests)
+* [Sub-second writes](#sub-second-writes)
 
 ## Notation and common conventions
 
@@ -38,8 +39,8 @@ Some behaviors are very common in tests, and thus they are given short attribute
 * **Register writes** (register list): generates a random new RTC state (ensuring that all values are different from
   the current state and that no rollovers will happen), writes it to the RTC registers and attempts to read it back.
   The test will pass if the state read back is equal to the new state, or to the new state plus one second.
-* **Second increment** (pass/fail, conditional): sets the seconds register to a random value (other than 59) and waits
-  for it to tick. The test passes if the new value is one greater than the value that was set.
+* **Seconds increment** (pass/fail, conditional): sets the seconds register to a random value (other than 59) and
+  waits for it to tick. The test passes if the new value is one greater than the value that was set.
 * **Rollovers** (pass/fail, conditional): sets the RTC state to 255 days, 23:59:59, and waits for it to tick. The test
   passes if the new value is 256 days, 00:00:00.
 * **Overflow** (pass/fail, conditional): sets the RTC state to 511 days (without overflow), 23:59:59, and waits for it
@@ -75,3 +76,24 @@ that is out of range (both in terms of bits and in terms of the expected ranges 
 * **High hours** (pass/fail): sets the hours register to a value between 24 and 30 and the minutes and seconds
   registers to 59, and waits for the RTC to tick. The test passes if the hours register is incremented (and the
   minutes and seconds registers become 0).
+
+## Sub-second writes
+
+These tests check the behavior of the sub-second counter in the RTC when a register is written to. While sub-second
+values cannot be inspected directly, they can be measured by waiting for the RTC to tick.
+
+These tests are named after the register that is written to and the time remaining (in milliseconds) until the next
+tick at the time of writing. For instance, the RTCS/900 test will write to the seconds register when the next tick is
+900ms away (i.e., 100ms after a tick).
+
+The tolerance is 8ms for all tests. The tests are:
+
+* **RTCS/500** (expected: 1000ms)
+* **RTCS/900** (expected: 1000ms)
+* **RTCM/50** (expected: 50ms)
+* **RTCM/600** (expected: 600ms)
+* **RTCH/200** (expected: 200ms)
+* **RTCDL/800** (expected: 800ms)
+* **RTCDH/300** (expected: 300ms)
+* **RTC off/400**: turns the RTC off 400ms before the next tick, waits roughly half a second, turns it back on and
+  measures the time it takes for the RTC to tick. (expected: 400ms)

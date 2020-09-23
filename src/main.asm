@@ -41,7 +41,7 @@ MainMenu:
 	add hl, de
 	inc b
 	dec a
-	jr z, .got_selection
+	jr nz, .got_selection
 	dec b
 	jr nz, .no_top_wrap
 	ld b, c
@@ -210,13 +210,3 @@ RunTests:
 
 .return
 	db "* Return@"
-
-Menus:
-	dw .basic_tests, BasicTests
-	dw .range_tests, RangeTests
-.end
-
-.basic_tests
-	db "Basic tests@"
-.range_tests
-	db "Range tests@"

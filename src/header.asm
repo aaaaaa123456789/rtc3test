@@ -186,7 +186,7 @@ Init:
 	ldh [c], a
 	ldh [c], a
 .no_color
-	ld a, %11101100
+	ld a, %11011100
 	ldh [rBGP], a
 	ld de, $8000
 	ld b, %11111111

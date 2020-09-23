@@ -118,6 +118,7 @@ ___test_sub_second_register_write: MACRO
 	ld b, a
 	ld a, 20 - (\2)
 	call WaitATimes50ms
+	start_timer ;start it a few cycles early to make up for the earlier delay
 	ld a, \1
 	ld [rRAMB], a
 	ld [hl], 0
@@ -127,7 +128,6 @@ ___test_sub_second_register_write: MACRO
 		ld a, RTCS
 	endc
 	ld [rRAMB], a
-	start_timer
 .check
 	latch_RTC
 	ld a, [hl]
@@ -183,10 +183,10 @@ RTCOffTimingTest:
 	dec a
 	jr nz, .loop
 	call PrepareTimer
-	ld a, RTCS
 	ld [hl], 0
-	ld [rRAMB], a
 	start_timer
+	ld a, RTCS
+	ld [rRAMB], a
 .check
 	latch_RTC
 	ld a, [hl]

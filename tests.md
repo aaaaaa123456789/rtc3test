@@ -86,14 +86,14 @@ These tests are named after the register that is written to and the time remaini
 tick at the time of writing. For instance, the RTCS/900 test will write to the seconds register when the next tick is
 900ms away (i.e., 100ms after a tick).
 
-The expected result for the tests that write to RTCS is 1000ms; the remaining test should result in the value shown in
-the test name. The tolerance is 8ms for all tests. The tests are:
+The tolerance is 8ms for all tests. The tests are:
 
-* **RTCS/500**
-* **RTCS/900**
-* **RTCM/50**
-* **RTCM/600**
-* **RTCH/200**
-* **RTCDL/800**
-* **RTCDH/300**
-* **RTC off/400** (also writes to RTCDH, but to the bit that turns the RTC off)
+* **RTCS/500** (expected: 1000ms)
+* **RTCS/900** (expected: 1000ms)
+* **RTCM/50** (expected: 50ms)
+* **RTCM/600** (expected: 600ms)
+* **RTCH/200** (expected: 200ms)
+* **RTCDL/800** (expected: 800ms)
+* **RTCDH/300** (expected: 300ms)
+* **RTC off/400**: turns the RTC off 400ms before the next tick, waits roughly half a second, turns it back on and
+  measures the time it takes for the RTC to tick. (expected: 400ms)

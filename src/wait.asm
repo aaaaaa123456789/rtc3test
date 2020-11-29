@@ -54,9 +54,9 @@ WaitATimes50ms:
 	add hl, hl ;dummy instruction to make up for the two lost cycles for jumps not taken
 .no_extra
 	; remaining: 166 - b cycles (b <= 51)
-	ld a, 138
+	ld a, 140
 	sub b
-	; remaining: 163 - b = a + 25 cycles
+	; remaining: 163 - b = a + 23 cycles
 	ld b, a
 	srl b
 	srl b
@@ -66,19 +66,11 @@ WaitATimes50ms:
 	; loop total: 4 cycles (times a & ~3 iterations)
 	cpl
 	and 3
-	; remaining: (a ^ 3) + 18 cycles
-	add a, LOW(.exit)
+	; remaining: (a ^ 3) + 16 cycles
+	assert ExitTimedWait < $100 ;this means the addition cannot overflow (because the header is at $100)
+	add a, ExitTimedWait
 	ld l, a
-	adc HIGH(.exit)
-	sub l
-	ld h, a
+	ld h, 0
 	jp hl
 	; remaining: (old a ^ 3) + 10 cycles - exactly enough for 0-3 nops, two pops and a ret
-
-.exit
-	nop
-	nop
-	nop
-	pop hl
-	pop bc
-	ret
+	; note: ExitTimedWait is before the ROM header (see header.asm)

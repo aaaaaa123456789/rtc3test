@@ -59,9 +59,16 @@ CarryIfNonZero:
 
 	assert @ == $38 ;we're not going to call this, so the assert is necessary
 CrashFF:
-	rst Crash
+	jr Crash
 
-	ds 7
+ExitTimedWait:
+	; the three nops are here for timing reasons (see wait.asm)
+	nop
+	nop
+	nop
+	pop hl
+	pop bc
+	ret
 
 	assert @ == $40
 VBlank:

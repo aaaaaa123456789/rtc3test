@@ -53,9 +53,9 @@ TickTest:
 	check_timer .tick_loop, nz
 	ld hl, hTestResult
 	call PrintTime
-	cpw de, 9950
+	cpw de, 9990
 	ret c
-	cpw de, 10051
+	cpw de, 10011
 	ccf
 	ret
 

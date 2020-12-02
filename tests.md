@@ -33,7 +33,7 @@ Some behaviors are very common in tests, and thus they are given short attribute
 ## Basic tests
 
 * **RTC on** (pass/fail): enables the RTC (by setting bit 6 of the control register) and waits for it to tick.
-* **Tick** (conditional): evaluates the time taken between successive ticks. (expected: 1000ms, tolerance: 5ms)
+* **Tick** (conditional): evaluates the time taken between successive ticks. (expected: 1000ms, tolerance: 1ms)
 * **RTC off** (pass/fail): disables the RTC and waits approximately four seconds for it to tick. The test fails if the
   RTC ticks.
 * **Register writes** (register list): generates a random new RTC state (ensuring that all values are different from
@@ -86,7 +86,7 @@ These tests are named after the register that is written to and the time remaini
 tick at the time of writing. For instance, the RTCS/900 test will write to the seconds register when the next tick is
 900ms away (i.e., 100ms after a tick).
 
-The tolerance is 8ms for all tests. The tests are:
+The tolerance is 1.5ms for all tests. The tests are:
 
 * **RTCS/500** (expected: 1000ms)
 * **RTCS/900** (expected: 1000ms)

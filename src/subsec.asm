@@ -85,9 +85,9 @@ LongSecondWrite:
 .done
 	ld hl, hTestResult
 	call PrintTime
-	cpw de, 9920
+	cpw de, 9985
 	ret c
-	cpw de, 10081
+	cpw de, 10016
 	ccf
 	ret
 
@@ -135,9 +135,9 @@ ___test_sub_second_register_write: MACRO
 	check_timer .check, nz
 	ld hl, hTestResult
 	call PrintTime
-	cpw de, (\2) * 500 - 80
+	cpw de, (\2) * 500 - 15
 	ret c
-	cpw de, (\2) * 500 + 81
+	cpw de, (\2) * 500 + 16
 	ccf
 	ret
 ENDM
@@ -194,8 +194,8 @@ RTCOffTimingTest:
 	check_timer .check, nz
 	ld hl, hTestResult
 	call PrintTime
-	cpw de, 3920
+	cpw de, 3985
 	ret c
-	cpw de, 4081
+	cpw de, 4016
 	ccf
 	ret

@@ -14,13 +14,13 @@ WaitVBlank:
 	xor a
 	jr WaitVBlankLoop
 
-Print:
+PrintString:
 	ld a, [hli]
 	cp "@"
 	ret z
 	ld [de], a
 	inc de
-	jr Print
+	jr PrintString
 
 ClearScreen:
 	; turns off the LCD as well
@@ -229,4 +229,4 @@ Init:
 EntryPoint:
 	cp $11
 	jr Init
-	ds $4c
+	ds $4c, 0

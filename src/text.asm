@@ -6,7 +6,7 @@ PassFailResult:
 	ld hl, FailString
 .ok
 	ld de, hTestResult
-	rst Print
+	rst PrintString
 	ld a, "@"
 	ld [de], a
 	pop af
@@ -98,7 +98,7 @@ PrintTime:
 	ld d, h
 	ld e, l
 	ld hl, TimeoutString
-	rst Print
+	rst PrintString
 	ld a, "@"
 	ld [de], a
 	pop hl
@@ -111,7 +111,7 @@ TimeoutString:
 TimeoutResult:
 	ld hl, TimeoutString
 	ld de, hTestResult
-	rst Print
+	rst PrintString
 	ld a, "@"
 	ld [de], a
 	scf

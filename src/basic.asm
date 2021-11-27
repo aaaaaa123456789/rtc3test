@@ -50,7 +50,7 @@ TickTest:
 	latch_RTC
 	ld a, [hl]
 	cp b
-	check_timer .tick_loop, nz
+	check_timer z, .tick_loop
 	ld hl, hTestResult
 	call PrintTime
 	cpw de, 9990

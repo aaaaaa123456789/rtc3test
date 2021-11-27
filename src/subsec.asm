@@ -50,7 +50,7 @@ ShortSecondWrite:
 	latch_RTC
 	ld a, [hl]
 	cp b
-	check_timer .check, nz
+	check_timer z, .check
 	jr LongSecondWrite.done
 
 LongSecondWrite:
@@ -81,7 +81,7 @@ LongSecondWrite:
 	latch_RTC
 	ld a, [hl]
 	and a
-	check_timer .check, nz
+	check_timer z, .check
 .done
 	ld hl, hTestResult
 	call PrintTime
@@ -132,7 +132,7 @@ ___test_sub_second_register_write: MACRO
 	latch_RTC
 	ld a, [hl]
 	cp b
-	check_timer .check, nz
+	check_timer z, .check
 	ld hl, hTestResult
 	call PrintTime
 	cpw de, (\2) * 500 - 15
@@ -191,7 +191,7 @@ RTCOffTimingTest:
 	latch_RTC
 	ld a, [hl]
 	cp b
-	check_timer .check, nz
+	check_timer z, .check
 	ld hl, hTestResult
 	call PrintTime
 	cpw de, 3985

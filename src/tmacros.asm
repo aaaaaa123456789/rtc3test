@@ -60,20 +60,19 @@ start_timer: MACRO
 ENDM
 
 check_timer: MACRO
-	; \1: jump label, \2: condition to exit
-	; intentionally inverted from a regular jump to highlight that the condition is negated
+	; \1: loop condition, \2: jump label
 	; exits with de = time (in units of 0.1ms), or $FFFF if the event didn't happen in 4 seconds
-	jr \2, .exit\@
+	jr !\1, .exit\@
 	ldh a, [c]
 	and a
-	jr nz, \1
+	jr nz, \2
 	ldh a, [rTIMA]
 	and $e0
 	cp e
-	jr z, \1
+	jr z, \2
 	ld e, a
 	inc d
-	jr nz, \1
+	jr nz, \2
 	ld de, -1
 	ld c, e
 	jr .done\@

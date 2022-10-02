@@ -92,7 +92,7 @@ LongSecondWrite:
 	ret
 
 ; These tests are all identical. I only want to write this thing once.
-___test_sub_second_register_write: MACRO
+MACRO ___test_sub_second_register_write
 	; in: \1: register, \2: time to tick when the register is written (in 50ms increments)
 	; no \@ in local labels because this is meant to be used as a function body
 	call WaitNextRTCTick

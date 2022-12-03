@@ -66,15 +66,14 @@ CompareRTC:
 	or h
 	ld a, l
 	pop hl
-	jr nz, .done
+	ret nz
 	cp e
-	jr nz, .done
+	ret nz
 	ld a, b
 	cp h
-	jr nz, .done
+	ret nz
 	ld a, c
 	cp l
-.done
 	ret
 
 WaitNextRTCTick:
